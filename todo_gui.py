@@ -8,7 +8,7 @@ import csv
 TASKS_FILE = "tasks.json"
 DATE_FORMAT = "%Y-%m-%d"
 
-# --- Data Logic (reuse from CLI) ---
+# --- Data Logic ---
 def load_tasks():
     if not os.path.exists(TASKS_FILE):
         return []
@@ -90,7 +90,6 @@ class TodoApp:
         self.refresh_tasks()
 
     def create_widgets(self):
-        # Entry frame
         entry_frame = ttk.LabelFrame(self.root, text="Add/Edit Task")
         entry_frame.pack(fill="x", padx=10, pady=5)
 
@@ -119,7 +118,6 @@ class TodoApp:
         self.update_btn = ttk.Button(entry_frame, text="Update Task", command=self.update_task, state="disabled")
         self.update_btn.grid(row=3, column=2, pady=4)
 
-        # Task list
         self.tree = ttk.Treeview(self.root, columns=("id", "title", "due", "priority", "category", "done", "archived"), show="headings")
         for col in ("id", "title", "due", "priority", "category", "done", "archived"):
             self.tree.heading(col, text=col.capitalize())
@@ -127,7 +125,6 @@ class TodoApp:
         self.tree.pack(fill="both", expand=True, padx=10, pady=5)
         self.tree.bind("<Double-1>", self.on_tree_select)
 
-        # Action buttons
         btn_frame = ttk.Frame(self.root)
         btn_frame.pack(fill="x", padx=10, pady=5)
         ttk.Button(btn_frame, text="Mark Done", command=self.mark_done).pack(side="left")
@@ -202,11 +199,7 @@ class TodoApp:
         if not tasks:
             messagebox.showinfo("Export", "No tasks to export.")
             return
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".csv",
-            filetypes=[("CSV files", "*.csv")],
-            title="Save tasks as CSV"
-        )
+        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")], title="Save tasks as CSV")
         if not file_path:
             return
         with open(file_path, "w", newline="", encoding="utf-8") as csvfile:
@@ -233,7 +226,6 @@ class TodoApp:
         self.due_var.set(vals[2])
         self.priority_var.set(vals[3])
         self.category_var.set(vals[4])
-        # Note is not shown in the table, so fetch from data
         for task in load_tasks():
             if task["id"] == self.selected_id:
                 self.note_var.set(task.get("note", ""))
